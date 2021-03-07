@@ -1,4 +1,3 @@
-absl-py @ file:///tmp/build/80754af9/absl-py_1607439979954/work
 astor==0.8.1
 astunparse==1.6.3
 cachetools==4.2.1
@@ -10,7 +9,6 @@ google-auth==1.25.0
 google-auth-oauthlib==0.4.2
 google-pasta==0.2.0
 grpcio==1.32.0
-h5py @ file:///opt/concourse/worker/volumes/live/98bee3fd-2687-4017-5421-d742d1f18c35/volume/h5py_1593454156895/work
 idna==2.10
 importlib-metadata
 Keras-Applications
