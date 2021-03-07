@@ -5,10 +5,10 @@ import uuid
 import numpy as np
 from flask import Flask, jsonify, make_response, render_template, request
 from game import Game
-from model import Model
+from model_lite import ModelLite
 
 app = Flask(__name__)
-app.secret_key = "s3cr3t"
+app.model = ModelLite('model.tflite')
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
 
@@ -48,8 +48,7 @@ def post_move():
     return encode(winner, board, new_board)
 
 def get_opponent_move(board):
-    m1 = Model(load_model_name="m1-2.model")
-    return m1.move(board, as_player=1)
+    return app.model.move(board, as_player=1)
 
 
 def encode(winner, board, new_board):
