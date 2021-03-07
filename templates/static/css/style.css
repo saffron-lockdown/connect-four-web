@@ -1,0 +1,14 @@
+.btn {
+  background-color: rgb(102, 153, 255);
+}
+img.results-img {
+  float: left;
+  height: 100px;
+}
+
+#footer {
+  margin-top: 100px;
+}
+p {
+  font-family: monospace;
+}
