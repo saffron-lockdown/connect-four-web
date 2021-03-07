@@ -1,4 +1,3 @@
-import glob
 import io
 import os
 import uuid
@@ -6,6 +5,7 @@ import uuid
 import numpy as np
 from flask import Flask, jsonify, make_response, render_template, request
 from game import Game
+from model import Model
 
 app = Flask(__name__)
 app.secret_key = "s3cr3t"
@@ -35,7 +35,7 @@ def post_move():
     
     previous_moves.append(move)
 
-    opponent_move = 3
+    opponent_move = get_opponent_move(board)
     winner, board = game.move(opponent_move)
     
     if winner is not None:
@@ -46,6 +46,11 @@ def post_move():
     write_game_file(previous_moves)
 
     return encode(winner, board)
+
+def get_opponent_move(board):
+    m1 = Model(load_model_name="m1-2.model")
+    return m1.move(board, as_player=1)
+
 
 def encode(winner, board):
     
@@ -70,4 +75,4 @@ def del_game_file():
     return
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    app.run(port=5004)
