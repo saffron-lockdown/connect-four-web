@@ -3,7 +3,6 @@ from copy import deepcopy
 
 import numpy as np
 from scipy.special import softmax
-from tqdm import tqdm
 
 from game import BOARD_SIZE, Game, run_game
 from tensorflow import keras
