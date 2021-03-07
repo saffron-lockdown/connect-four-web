@@ -2,11 +2,14 @@
 block head %} {{ super() }} {% endblock %} {% block content %}
 <div class="row text-center">
   <h1>{{ title }}</h1>
-  <p id="board"></p>
+  <p id="board">____<br />____<br />____<br />____<br /></p>
+  <p id="msg"></p>
 </div>
 <br /><br />
 <div class="row text-center">
   <button class="btn btn-primary" id="move1">1</button>
   <button class="btn btn-primary" id="move2">2</button>
+  <button class="btn btn-primary" id="move3">3</button>
+  <button class="btn btn-primary" id="move4">4</button>
 </div>
 {% endblock %}

@@ -31,31 +31,32 @@ def post_move():
     
     if winner is not None:
         del_game_file()
-        return encode(winner, board)
+        return encode(winner, board, board)
     
     previous_moves.append(move)
 
     opponent_move = get_opponent_move(board)
-    winner, board = game.move(opponent_move)
+    winner, new_board = game.move(opponent_move)
     
     if winner is not None:
         del_game_file()
-        return encode(winner, board)
+        return encode(winner, board, new_board)
     
     previous_moves.append(opponent_move)
     write_game_file(previous_moves)
 
-    return encode(winner, board)
+    return encode(winner, board, new_board)
 
 def get_opponent_move(board):
     m1 = Model(load_model_name="m1-2.model")
     return m1.move(board, as_player=1)
 
 
-def encode(winner, board):
+def encode(winner, board, new_board):
     
     return jsonify({
         "board": board,
+        "new_board": new_board,
         "winner": winner
     })
 
@@ -75,4 +76,4 @@ def del_game_file():
     return
 
 if __name__ == "__main__":
-    app.run(port=5004)
+    app.run(port=5000)
