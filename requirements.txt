@@ -11,9 +11,7 @@ google-pasta==0.2.0
 grpcio==1.32.0
 idna==2.10
 importlib-metadata
-Keras-Applications
-Keras-Preprocessin
-Markdown
+keras
 mkl-fft==1.2.0
 mkl-random==1.1.1
 mkl-service==2.3.0
