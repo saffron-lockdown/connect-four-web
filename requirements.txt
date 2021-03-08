@@ -10,3 +10,5 @@ gunicorn==20.0.4
 pandas==1.1.5
 scipy==1.5.4
 tflite_runtime
+--extra-index-url https://google-coral.github.io/py-repo/
+#tensorflow==2.4.1
