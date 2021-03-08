@@ -11,6 +11,7 @@ app = Flask(__name__)
 app.model = ModelLite('model.tflite')
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 @app.route("/", methods=["GET"])
 def index():
@@ -20,28 +21,28 @@ def index():
 @app.route("/postmethod", methods=["POST"])
 def post_move():
     move = int(request.form["move"])
-    
+
     game = Game()
     previous_moves = read_game_file()
-    
+
     for m in previous_moves:
         game.move(m)
-    
+
     winner, board = game.move(move)
-    
+
     if winner is not None:
         del_game_file()
         return encode(winner, board, board)
-    
+
     previous_moves.append(move)
 
     opponent_move = get_opponent_move(board)
     winner, new_board = game.move(opponent_move)
-    
+
     if winner is not None:
         del_game_file()
         return encode(winner, board, new_board)
-    
+
     previous_moves.append(opponent_move)
     write_game_file(previous_moves)
 
@@ -52,7 +53,7 @@ def get_opponent_move(board):
 
 
 def encode(winner, board, new_board):
-    
+
     return jsonify({
         "board": board,
         "new_board": new_board,

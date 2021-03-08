@@ -1,5 +1,6 @@
 .btn {
   background-color: rgb(102, 153, 255);
+  width: 50px;
 }
 img.results-img {
   float: left;
@@ -13,3 +14,38 @@ p {
   font-family: monospace;
   font-size: xx-large;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: solid black 1px;
+  height: 50px;
+  width: 50px;
+}
+
+.counter {
+  border: solid black 1px;
+  border-radius: 50%;
+  height: 70%;
+  width: 70%;
+}
+
+.counter-0 {
+  background-color: red;
+}
+
+.counter-1 {
+  background-color: yellow;
+}
+

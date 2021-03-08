@@ -1,15 +1,17 @@
 {% extends "layouts/base.html" %} {% block title %}{{title}}{% endblock %} {%
 block head %} {{ super() }} {% endblock %} {% block content %}
-<div class="row text-center">
+<div class="text-center">
   <h1>{{ title }}</h1>
-  <p id="board">____<br />____<br />____<br />____<br /></p>
+  <div class="container">
+    <div id="board"></div>
+    <div class="row">
+      <button class="btn btn-primary" id="move1">1</button>
+      <button class="btn btn-primary" id="move2">2</button>
+      <button class="btn btn-primary" id="move3">3</button>
+      <button class="btn btn-primary" id="move4">4</button>
+    </div>
+  </div>
+  asdf
   <p id="msg"></p>
-</div>
-<br /><br />
-<div class="row text-center">
-  <button class="btn btn-primary" id="move1">1</button>
-  <button class="btn btn-primary" id="move2">2</button>
-  <button class="btn btn-primary" id="move3">3</button>
-  <button class="btn btn-primary" id="move4">4</button>
 </div>
 {% endblock %}
