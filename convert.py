@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-# Convert the model
+## Convert the model
 converter = tf.lite.TFLiteConverter.from_saved_model('m1-2.model') # path to the SavedModel directory
 tflite_model = converter.convert()
 
