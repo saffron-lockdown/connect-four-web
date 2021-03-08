@@ -13,8 +13,30 @@ $(document).ready(function () {
     });
   }
 
+  function create_tile(val) {
+    const tile = document.createElement('div');
+    tile.className = "tile";
+    if ([0, 1].includes(val)) {
+      const counter = document.createElement('div');
+      counter.className = `counter counter-${val}`;
+      tile.appendChild(counter);
+    }
+    return tile;
+  }
+
   function display_board_text(board_text) {
-    document.getElementById("board").innerHTML = board_text;
+    const board_el = document.getElementById("board");
+    board_el.innerHTML = '';
+    board_text.forEach((row) => {
+      const row_el = document.createElement('div');
+      row_el.className = "row";
+      row.forEach(col => {
+        const tile = create_tile(col);
+        row_el.appendChild(tile);
+      })
+      board_el.appendChild(row_el)
+    })
+
   }
 
   function display_winner(winner) {
@@ -31,7 +53,7 @@ $(document).ready(function () {
     // extend arrays to full length
     boardE = board.map((col) => {
       while (col.length < 4) {
-        col.push("_");
+        col.push(null);
       }
       return col;
     });
@@ -41,10 +63,6 @@ $(document).ready(function () {
 
     return boardT
       .reverse()
-      .map(function (x) {
-        return x.join("");
-      })
-      .join("<br>");
   }
 
   $("#clearButton").click(function () {
@@ -63,4 +81,10 @@ $(document).ready(function () {
   $("#move4").click(function () {
     postMove(3);
   });
+
+  const initial_board = [];
+  for (let i = 0; i < 4; i += 1) {
+    initial_board.push(new Array(4).fill(null));
+  }
+  display_board_text(initial_board);
 });
