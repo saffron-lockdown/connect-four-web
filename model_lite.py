@@ -1,5 +1,5 @@
 import numpy as np
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 from game import BOARD_SIZE
 from copy import deepcopy
 from scipy.special import softmax
@@ -8,7 +8,7 @@ import random
 class ModelLite():
     def __init__(self, load_model_name):
         # Load the TFLite model and allocate tensors.
-        self.interpreter = tf.lite.Interpreter(model_path="model.tflite")
+        self.interpreter = tflite.Interpreter(model_path="model.tflite")
         self.interpreter.allocate_tensors()
 
         # Get input and output tensors.
