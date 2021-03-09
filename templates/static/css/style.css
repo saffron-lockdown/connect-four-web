@@ -2,6 +2,12 @@
   background-color: rgb(102, 153, 255);
   width: 50px;
 }
+
+.btn-block {
+  background-color: rgb(102, 153, 255);
+  width: 200px;
+}
+
 img.results-img {
   float: left;
   height: 100px;
@@ -48,4 +54,3 @@ p {
 .counter-1 {
   background-color: yellow;
 }
-

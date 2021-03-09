@@ -81,10 +81,20 @@ $(document).ready(function () {
   $("#move4").click(function () {
     postMove(3);
   });
+  $("#restart").click(function () {
+    $.post("/postmethod/restart", function (err, req, resp) {
+      display_board_text(initial_board());
+      display_winner(null);
+    });
+  });
 
-  const initial_board = [];
-  for (let i = 0; i < 4; i += 1) {
-    initial_board.push(new Array(4).fill(null));
+  function initial_board() {
+    const initial_board = [];
+    for (let i = 0; i < 4; i += 1) {
+      initial_board.push(new Array(4).fill(null));
+    }
+    return initial_board;
   }
-  display_board_text(initial_board);
+
+  display_board_text(initial_board());
 });

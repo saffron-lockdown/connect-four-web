@@ -6,12 +6,12 @@ import numpy as np
 from flask import Flask, jsonify, make_response, render_template, request
 from game import Game
 
-from model_lite import ModelLite # For Prod
-# from model import Model # For dev
+#from model_lite import ModelLite # For Prod
+from model import Model # For dev
 
 app = Flask(__name__)
-app.model = ModelLite('model.tflite') # For Prod
-#app.model = Model('m1-2.model') # For dev
+#app.model = ModelLite('model.tflite') # For Prod
+app.model = Model('m1-2.model') # For dev
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -20,6 +20,11 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 def index():
     title = "Let's play connect 3 :D"
     return render_template("layouts/index.html", title=title)
+
+@app.route("/postmethod/restart", methods=["POST"])
+def restart():
+    del_game_file()
+    return {}
 
 @app.route("/postmethod", methods=["POST"])
 def post_move():
@@ -75,8 +80,10 @@ def write_game_file(moves):
         file.write("".join([str(x) for x in moves]))
 
 def del_game_file():
-    os.remove('gamefile')
-    return
+    try:
+        os.remove('gamefile')
+    except FileNotFoundError:
+        print('gamefile already deleted')
 
 if __name__ == "__main__":
     app.run(port=5000)
