@@ -1,13 +1,13 @@
 $(document).ready(function () {
   function postMove(move) {
     $.post("/postmethod", { move }, function (err, req, resp) {
-      var board_text = make_board_text(resp["responseJSON"]["board"]);
-      var new_board_text = make_board_text(resp["responseJSON"]["new_board"]);
+      var board = make_board(resp["responseJSON"]["board"]);
+      var new_board = make_board(resp["responseJSON"]["new_board"]);
       var winner = resp["responseJSON"]["winner"];
 
-      display_board_text(board_text);
+      display_board(board);
       setTimeout(() => {
-        display_board_text(new_board_text);
+        display_board(new_board);
         display_winner(winner);
       }, 200);
     });
@@ -24,10 +24,10 @@ $(document).ready(function () {
     return tile;
   }
 
-  function display_board_text(board_text) {
+  function display_board(board) {
     const board_el = document.getElementById("board");
     board_el.innerHTML = "";
-    board_text.forEach((row) => {
+    board.forEach((row) => {
       const row_el = document.createElement("div");
       row_el.className = "row";
       row.forEach((col) => {
@@ -48,7 +48,7 @@ $(document).ready(function () {
     }
   }
 
-  function make_board_text(board) {
+  function make_board(board) {
     // Return a text representation of the board
 
     // extend arrays to full length
@@ -83,7 +83,7 @@ $(document).ready(function () {
   });
   $("#restart").click(function () {
     $.post("/postmethod/restart", function (err, req, resp) {
-      display_board_text(initial_board());
+      display_board(initial_board());
       display_winner(null);
     });
   });
@@ -96,5 +96,5 @@ $(document).ready(function () {
     return initial_board;
   }
 
-  display_board_text(initial_board());
+  display_board(initial_board());
 });
