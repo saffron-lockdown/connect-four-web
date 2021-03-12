@@ -6,12 +6,15 @@ import numpy as np
 from flask import Flask, jsonify, make_response, render_template, request
 from game import Game
 
-from model_lite import ModelLite # For Prod
-# from model import Model # For dev
-
 app = Flask(__name__)
-app.model = ModelLite('model.tflite') # For Prod
-# app.model = Model('m1-2.model') # For dev
+
+if os.getenv('ENV') == 'prod':
+    from model_lite import ModelLite  # For Prod
+    app.model = ModelLite('model.tflite') # For Prod
+else:
+    from model import Model # For dev
+    app.model = Model('m1-2.model') # For dev
+
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -31,7 +34,7 @@ def restart():
 
 @app.route("/postmethod", methods=["POST"])
 def post_move():
-   
+
     cookie = request.cookies.get('cookie')
 
     move = int(request.form["move"])
