@@ -19,19 +19,25 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 @app.route("/", methods=["GET"])
 def index():
     title = "Let's play connect 3 :D"
-    return render_template("layouts/index.html", title=title)
+    resp = make_response(render_template("layouts/index.html", title=title))
+    resp.set_cookie('cookie', str(uuid.uuid1()))
+    return resp
 
 @app.route("/postmethod/restart", methods=["POST"])
 def restart():
-    del_game_file()
+    cookie = request.cookies.get('cookie')
+    del_game_file(cookie)
     return {}
 
 @app.route("/postmethod", methods=["POST"])
 def post_move():
+   
+    cookie = request.cookies.get('cookie')
+
     move = int(request.form["move"])
 
-    game = Game()
-    previous_moves = read_game_file()
+    game = Game(verbose=False)
+    previous_moves = read_game_file(cookie)
 
     for m in previous_moves:
         game.move(m)
@@ -39,7 +45,7 @@ def post_move():
     winner, board = game.move(move)
 
     if winner is not None:
-        del_game_file()
+        del_game_file(cookie)
         return encode(winner, board, board)
 
     previous_moves.append(move)
@@ -48,11 +54,11 @@ def post_move():
     winner, new_board = game.move(opponent_move)
 
     if winner is not None:
-        del_game_file()
+        del_game_file(cookie)
         return encode(winner, board, new_board)
 
     previous_moves.append(opponent_move)
-    write_game_file(previous_moves)
+    write_game_file(previous_moves, cookie)
 
     return encode(winner, board, new_board)
 
@@ -68,22 +74,22 @@ def encode(winner, board, new_board):
         "winner": winner
     })
 
-def read_game_file():
+def read_game_file(cookie):
     try:
-        with open('gamefile', "r") as file:
+        with open(f"gamefiles/gamefile_{cookie}", "r") as file:
             return [int(x) for x in file.read()]
     except:
         return []
 
-def write_game_file(moves):
-    with open('gamefile', "w") as file:
+def write_game_file(moves, cookie):
+    with open(f"gamefiles/gamefile_{cookie}", "w") as file:
         file.write("".join([str(x) for x in moves]))
 
-def del_game_file():
+def del_game_file(cookie):
     try:
-        os.remove('gamefile')
-    except FileNotFoundError:
-        print('gamefile already deleted')
+        os.remove(f"gamefiles/gamefile_{cookie}")
+    except FileNotFoundError as e:
+        print(f"gamefile already deleted\n {e}")
 
 if __name__ == "__main__":
     app.run(port=5000)
