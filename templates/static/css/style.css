@@ -21,7 +21,7 @@ p {
   font-size: xx-large;
 }
 
-.container {
+.board {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -30,6 +30,14 @@ p {
 .col {
   display: flex;
   flex-direction: column-reverse;
+}
+
+.ghost {
+  opacity: 0;
+}
+
+.col:hover .ghost {
+  opacity: 50%;
 }
 
 .tile {

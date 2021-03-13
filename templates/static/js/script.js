@@ -37,29 +37,34 @@ function App(props) {
     winnerText = "";
   }
   return html`
-    <div class="container">
+    <div class="board">
       ${[
-        board.map((col, index) => html`
-          <div class="col">
-            ${col.map((row) => html`
-              <div class="tile" onClick=${() => {
-                $.post("/postmethod", { move: index }, function (err, req, resp) {
-                  var board = make_board(resp["responseJSON"]["board"]);
-                  var new_board = make_board(resp["responseJSON"]["new_board"]);
-                  var winner = resp["responseJSON"]["winner"];
+        board.map((col, colIndex) => {
+          const ghostRowIndex = col.findIndex((x) => x === null)
+          let pizza;
+          return html`
+            <div class="col">
+              ${col.map((row, rowIndex) => html`
+                <div class="tile" onClick=${() => {
+                  $.post("/postmethod", { move: colIndex }, function (err, req, resp) {
+                    var board = make_board(resp["responseJSON"]["board"]);
+                    var new_board = make_board(resp["responseJSON"]["new_board"]);
+                    var winner = resp["responseJSON"]["winner"];
 
-                  setBoard(board);
-                  setTimeout(() => {
-                    setBoard(new_board);
-                    setWinner(winner);
-                  }, 200);
-                });
-              }}>
-                ${typeof row === 'number' && html`<div class="counter counter-${row}"></div>`}
-              </div>
-            `)}
-          </div>`
-        )
+                    setBoard(board);
+                    setTimeout(() => {
+                      setBoard(new_board);
+                      setWinner(winner);
+                    }, 200);
+                  });
+                }}>
+                  ${typeof row === 'number' && html`<div class="counter counter-${row}"></div>`}
+                  ${rowIndex === ghostRowIndex && html`<div class="counter ghost"></div>`}
+                </div>
+              `)}
+            </div>
+          `
+        })
       ]}
     </div>
     <div class="row">${winnerText}</div>
