@@ -1,14 +1,15 @@
 import random
 from copy import deepcopy
 
-BOARD_SIZE = 4
+BOARD_HEIGHT = 4
+BOARD_WIDTH = 4
 LINE_LENGTH = 3  # the line you need to make
 
 
 class Game:
 
-    _width = BOARD_SIZE
-    _height = BOARD_SIZE
+    _width = BOARD_WIDTH
+    _height = BOARD_HEIGHT
 
     def __init__(self, verbose=True):
         self._board = [[] for _ in range(self._width)]
@@ -146,10 +147,10 @@ class Game:
 
         # Footer
         if msg:
-            print("-" * BOARD_SIZE)
+            print("-" * BOARD_WIDTH)
             print(msg)
 
-        print("=" * BOARD_SIZE)
+        print("=" * BOARD_WIDTH)
 
 
 ####################
@@ -191,12 +192,12 @@ def play_game(opponent):
         if winner is not None:
             return winner
 
-        print("".join([str(x) for x in range(BOARD_SIZE)]))
+        print("".join([str(x) for x in range(BOARD_WIDTH)]))
 
         move = None
         while move is None:
-            choice = int(input(f"choose column 0-{BOARD_SIZE-1}: "))
-            if choice in range(BOARD_SIZE):
+            choice = int(input(f"choose column 0-{BOARD_WIDTH-1}: "))
+            if choice in range(BOARD_WIDTH):
                 move = choice
 
         winner, board = g.move(move)

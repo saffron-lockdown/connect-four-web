@@ -1,6 +1,6 @@
 import numpy as np
 import tflite_runtime.interpreter as tflite
-from game import BOARD_SIZE
+from game import BOARD_WIDTH, BOARD_HEIGHT
 from copy import deepcopy
 from scipy.special import softmax
 import random
@@ -26,7 +26,7 @@ class ModelLite:
 
         return input_vector
 
-    def board_to_vec(self, board, length=BOARD_SIZE):
+    def board_to_vec(self, board, length=BOARD_HEIGHT):
         copy = deepcopy(board)
         for b in copy:
             b += [None] * (length - len(b))

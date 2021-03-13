@@ -8,34 +8,39 @@ from game import Game
 
 app = Flask(__name__)
 
-if os.getenv('ENV') == 'prod':
+if os.getenv("ENV") == "prod":
     from model_lite import ModelLite  # For Prod
-    app.model = ModelLite('model.tflite') # For Prod
+
+    app.model = ModelLite("models/model.tflite")  # For Prod
 else:
-    from model import Model # For dev
-    app.model = Model('m1-2.model') # For dev
+    from model import Model  # For dev
+
+    app.model = Model("models/m1-2.model")  # For dev
 
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
 
 @app.route("/", methods=["GET"])
 def index():
     title = "Let's play connect 3 :D"
     resp = make_response(render_template("layouts/index.html", title=title))
-    resp.set_cookie('cookie', str(uuid.uuid1()))
+    resp.set_cookie("cookie", str(uuid.uuid1()))
     return resp
+
 
 @app.route("/postmethod/restart", methods=["POST"])
 def restart():
-    cookie = request.cookies.get('cookie')
+    cookie = request.cookies.get("cookie")
     del_game_file(cookie)
     return {}
+
 
 @app.route("/postmethod", methods=["POST"])
 def post_move():
 
-    cookie = request.cookies.get('cookie')
+    cookie = request.cookies.get("cookie")
 
     move = int(request.form["move"])
 
@@ -65,17 +70,15 @@ def post_move():
 
     return encode(winner, board, new_board)
 
+
 def get_opponent_move(board):
     return app.model.move(board, as_player=1)
 
 
 def encode(winner, board, new_board):
 
-    return jsonify({
-        "board": board,
-        "new_board": new_board,
-        "winner": winner
-    })
+    return jsonify({"board": board, "new_board": new_board, "winner": winner})
+
 
 def read_game_file(cookie):
     try:
@@ -84,15 +87,18 @@ def read_game_file(cookie):
     except:
         return []
 
+
 def write_game_file(moves, cookie):
     with open(f"gamefiles/gamefile_{cookie}", "w") as file:
         file.write("".join([str(x) for x in moves]))
+
 
 def del_game_file(cookie):
     try:
         os.remove(f"gamefiles/gamefile_{cookie}")
     except FileNotFoundError as e:
         print(f"gamefile already deleted\n {e}")
+
 
 if __name__ == "__main__":
     app.run(port=5000)

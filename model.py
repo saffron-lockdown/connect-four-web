@@ -4,7 +4,7 @@ from copy import deepcopy
 import numpy as np
 from scipy.special import softmax
 
-from game import BOARD_SIZE, Game, run_game
+from game import BOARD_WIDTH, BOARD_HEIGHT, Game, run_game
 from tensorflow import keras
 from tensorflow.keras.layers import Dense, InputLayer
 from tensorflow.keras.models import Sequential
@@ -16,23 +16,23 @@ class BasicModel:
 
     def move(self, board, as_player):
         # sometimes go for the middle
-        if np.random.random() < 0.25 and len(board[3]) < BOARD_SIZE:
+        if np.random.random() < 0.25 and len(board[3]) < BOARD_HEIGHT:
             return 3
         # sometimes play randomly
         if np.random.random() < 0.25:
-            rand = random.randint(0, BOARD_SIZE - 1)
-            if len(board[rand]) < BOARD_SIZE:
+            rand = random.randint(0, BOARD_WIDTH - 1)
+            if len(board[rand]) < BOARD_HEIGHT:
                 return rand
         # sometimes cover the first 0 you see
         else:
             for i in range(len(board)):
                 if (
                     board[i]
-                    and len(board[i]) < BOARD_SIZE
+                    and len(board[i]) < BOARD_HEIGHT
                     and board[i].pop() == 1 - as_player
                 ):
                     return i
-        return random.randint(0, BOARD_SIZE - 1)
+        return random.randint(0, BOARD_WIDTH - 1)
 
     def fit(self, *args, **kwargs):
         pass
@@ -43,7 +43,7 @@ class RandomModel:
     _name = "random_model"
 
     def move(self, board, as_player):
-        return random.randint(0, BOARD_SIZE - 1)
+        return random.randint(0, BOARD_WIDTH - 1)
 
     def fit(self, *args, **kwargs):
         pass
@@ -51,7 +51,7 @@ class RandomModel:
 
 class Me:
     def move(self, board, as_player):
-        return int(input(f"choose column 0-{BOARD_SIZE-1}: "))
+        return int(input(f"choose column 0-{BOARD_WIDTH-1}: "))
 
 
 class Model:
@@ -86,10 +86,10 @@ class Model:
 
     def initialise(self):
         self._model = Sequential()
-        self._model.add(InputLayer(batch_input_shape=(1, 2 * BOARD_SIZE ** 2)))
-        self._model.add(Dense(6 * BOARD_SIZE ** 2, activation="relu"))
-        self._model.add(Dense(2 * BOARD_SIZE, activation="relu"))
-        self._model.add(Dense(BOARD_SIZE, activation="linear"))
+        self._model.add(InputLayer(batch_input_shape=(1, 2 * BOARD_WIDTH * BOARD_HEIGHT)))
+        self._model.add(Dense(6 * BOARD_WIDTH * BOARD_HEIGHT, activation="relu"))
+        self._model.add(Dense(2 * BOARD_WIDTH, activation="relu"))
+        self._model.add(Dense(BOARD_WIDTH, activation="linear"))
         self._model.compile(
             loss="mse",
             optimizer=keras.optimizers.Adam(learning_rate=0.005),
@@ -105,7 +105,7 @@ class Model:
             input_vector = self.board_to_vec(reversed_board)
         return input_vector
 
-    def board_to_vec(self, board, length=BOARD_SIZE):
+    def board_to_vec(self, board, length=BOARD_HEIGHT):
         copy = deepcopy(board)
         for b in copy:
             b += [None] * (length - len(b))
