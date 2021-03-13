@@ -23,12 +23,13 @@ p {
 
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 
-.row {
+.col {
   display: flex;
+  flex-direction: column-reverse;
 }
 
 .tile {
@@ -41,20 +42,20 @@ p {
 }
 
 .counter {
-  animation: new-item-animation .3s linear forwards;
   border: solid black 1px;
   border-radius: 50%;
   height: 70%;
   width: 70%;
+  animation: counter-falling .3s ease-in forwards;
 }
 
-@keyframes new-item-animation {
+@keyframes counter-falling {
   from {
     transform: translateY(-400px);
   }
 
   to {
-    transform : translateY(0);
+    transform: translateY(0);
   }
 }
 

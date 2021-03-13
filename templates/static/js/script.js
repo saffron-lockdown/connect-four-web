@@ -6,8 +6,6 @@ import { useState } from 'https://unpkg.com/preact@latest/hooks/dist/hooks.modul
 const html = htm.bind(h);
 
 function make_board(board) {
-  // Return a text representation of the board
-
   // extend arrays to full length
   const boardE = board.map((col) => {
     while (col.length < 4) {
@@ -16,10 +14,7 @@ function make_board(board) {
     return col;
   });
 
-  // Transpose the board
-  const boardT = boardE[0].map((_, colIndex) => board.map((row) => row[colIndex]));
-
-  return boardT.reverse();
+  return boardE;
 }
 
 function initial_board() {
@@ -42,11 +37,11 @@ function App(props) {
     winnerText = "";
   }
   return html`
-    <div>
+    <div class="container">
       ${[
-        board.map((row) => html`
-          <div class="row">
-            ${row.map((col, index) => html`
+        board.map((col, index) => html`
+          <div class="col">
+            ${col.map((row) => html`
               <div class="tile" onClick=${() => {
                 $.post("/postmethod", { move: index }, function (err, req, resp) {
                   var board = make_board(resp["responseJSON"]["board"]);
@@ -60,23 +55,23 @@ function App(props) {
                   }, 200);
                 });
               }}>
-                ${typeof col === 'number' && html`<div class="counter counter-${col}"></div>`}
+                ${typeof row === 'number' && html`<div class="counter counter-${row}"></div>`}
               </div>
             `)}
           </div>`
         )
       ]}
-      <div class="row">${winnerText}</div>
-      <div class="row">
-        <button class="btn btn-primary btn-block" onClick=${() => {
-          $.post("/postmethod/restart", function (err, req, resp) {
-            setBoard(initial_board());
-            setWinner(null);
-          })
-        }}>
-          Restart Game
-        </button>
-      </div>
+    </div>
+    <div class="row">${winnerText}</div>
+    <div class="row">
+      <button class="btn btn-primary btn-block" onClick=${() => {
+        $.post("/postmethod/restart", function (err, req, resp) {
+          setBoard(initial_board());
+          setWinner(null);
+        })
+      }}>
+        Restart Game
+      </button>
     </div>
   `
 }
