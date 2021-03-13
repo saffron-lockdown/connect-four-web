@@ -118,12 +118,12 @@ def training_loop(training_model, opponent_model, verbose=False, message=""):
                 callbacks=[tensorboard],
             )
 
-            new_preds = training_model.predict(board, as_player)
-
-            sse = sum([(x - y) ** 2 for x, y in zip(preds[0], target_vec)])
-            new_sse = sum([(x - y) ** 2 for x, y in zip(new_preds[0], target_vec)])
-
             if verbose:
+
+                new_preds = training_model.predict(board, as_player)
+                sse = sum([(x - y) ** 2 for x, y in zip(preds[0], target_vec)])
+                new_sse = sum([(x - y) ** 2 for x, y in zip(new_preds[0], target_vec)])
+
                 print(
                     f"""
                     {training_model._name} training as player: {as_player}, move: {move_num}, eps: {round(eps, 2)},
