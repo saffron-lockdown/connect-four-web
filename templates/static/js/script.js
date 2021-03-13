@@ -1,100 +1,84 @@
-$(document).ready(function () {
-  function postMove(move) {
-    $.post("/postmethod", { move }, function (err, req, resp) {
-      var board = make_board(resp["responseJSON"]["board"]);
-      var new_board = make_board(resp["responseJSON"]["new_board"]);
-      var winner = resp["responseJSON"]["winner"];
+import { Component, createElement as h, render } from 'https://unpkg.com/preact@latest?module';
 
-      display_board(board);
-      setTimeout(() => {
-        display_board(new_board);
-        display_winner(winner);
-      }, 200);
-    });
-  }
+import htm from 'https://unpkg.com/htm?module';
+import { useState } from 'https://unpkg.com/preact@latest/hooks/dist/hooks.module.js?module';
 
-  function create_tile(val) {
-    const tile = document.createElement("div");
-    tile.className = "tile";
-    if ([0, 1].includes(val)) {
-      const counter = document.createElement("div");
-      counter.className = `counter counter-${val}`;
-      tile.appendChild(counter);
+const html = htm.bind(h);
+
+function make_board(board) {
+  // Return a text representation of the board
+
+  // extend arrays to full length
+  const boardE = board.map((col) => {
+    while (col.length < 4) {
+      col.push(null);
     }
-    return tile;
+    return col;
+  });
+
+  // Transpose the board
+  const boardT = boardE[0].map((_, colIndex) => board.map((row) => row[colIndex]));
+
+  return boardT.reverse();
+}
+
+function initial_board() {
+  const initial_board = [];
+  for (let i = 0; i < 4; i += 1) {
+    initial_board.push(new Array(4).fill(null));
   }
+  return initial_board;
+}
 
-  function display_board(board) {
-    const board_el = document.getElementById("board");
-    board_el.innerHTML = "";
-    board.forEach((row) => {
-      const row_el = document.createElement("div");
-      row_el.className = "row";
-      row.forEach((col) => {
-        const tile = create_tile(col);
-        row_el.appendChild(tile);
-      });
-      board_el.appendChild(row_el);
-    });
+function App(props) {
+  const [board, setBoard] = useState(initial_board());
+  const [winner, setWinner] = useState();
+  let winnerText;
+  if (winner === 0) {
+    winnerText = "You Win!";
+  } else if (winner === 1) {
+    winnerText = "You Lose!";
+  } else {
+    winnerText = "";
   }
+  return html`
+    <div>
+      ${[
+        board.map((row) => html`
+          <div class="row">
+            ${row.map((col, index) => html`
+              <div class="tile" onClick=${() => {
+                $.post("/postmethod", { move: index }, function (err, req, resp) {
+                  var board = make_board(resp["responseJSON"]["board"]);
+                  var new_board = make_board(resp["responseJSON"]["new_board"]);
+                  var winner = resp["responseJSON"]["winner"];
 
-  function display_winner(winner) {
-    if (winner == 0) {
-      document.getElementById("msg").innerHTML = "You Win!";
-    } else if (winner == 1) {
-      document.getElementById("msg").innerHTML = "You Lose!";
-    } else {
-      document.getElementById("msg").innerHTML = "";
-    }
-  }
+                  setBoard(board);
+                  setTimeout(() => {
+                    setBoard(new_board);
+                    setWinner(winner);
+                  }, 200);
+                });
+              }}>
+                ${typeof col === 'number' && html`<div class="counter counter-${col}"></div>`}
+              </div>
+            `)}
+          </div>`
+        )
+      ]}
+      <div class="row">${winnerText}</div>
+      <div class="row">
+        <button class="btn btn-primary btn-block" onClick=${() => {
+          $.post("/postmethod/restart", function (err, req, resp) {
+            setBoard(initial_board());
+            setWinner(null);
+          })
+        }}>
+          Restart Game
+        </button>
+      </div>
+    </div>
+  `
+}
 
-  function make_board(board) {
-    // Return a text representation of the board
-
-    // extend arrays to full length
-    boardE = board.map((col) => {
-      while (col.length < 4) {
-        col.push(null);
-      }
-      return col;
-    });
-
-    // Transpose the board
-    boardT = boardE[0].map((_, colIndex) => board.map((row) => row[colIndex]));
-
-    return boardT.reverse();
-  }
-
-  $("#clearButton").click(function () {
-    clearCanvas();
-  });
-
-  $("#move1").click(function () {
-    postMove(0);
-  });
-  $("#move2").click(function () {
-    postMove(1);
-  });
-  $("#move3").click(function () {
-    postMove(2);
-  });
-  $("#move4").click(function () {
-    postMove(3);
-  });
-  $("#restart").click(function () {
-    $.post("/postmethod/restart", function (err, req, resp) {
-      display_board(initial_board());
-      display_winner(null);
-    });
-  });
-
-  function initial_board() {
-    const initial_board = [];
-    for (let i = 0; i < 4; i += 1) {
-      initial_board.push(new Array(4).fill(null));
-    }
-    return initial_board;
-  }
-
-  display_board(initial_board());
-});
+render(html`<${App} name="World" />`, document.querySelector('#app'));

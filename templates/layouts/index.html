@@ -3,19 +3,7 @@ block head %} {{ super() }} {% endblock %} {% block content %}
 <div class="text-center">
   <h1>{{ title }}</h1>
   <div class="container">
-    <div id="board"></div>
-    <div class="row">
-      <button class="btn btn-primary" id="move1">1</button>
-      <button class="btn btn-primary" id="move2">2</button>
-      <button class="btn btn-primary" id="move3">3</button>
-      <button class="btn btn-primary" id="move4">4</button>
-    </div>
-    <div class="row">
-      <button class="btn btn-primary btn-block" id="restart">
-        Restart Game
-      </button>
-    </div>
+    <div id="app"></div>
   </div>
-  <p id="msg"></p>
 </div>
 {% endblock %}

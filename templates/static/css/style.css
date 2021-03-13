@@ -41,10 +41,21 @@ p {
 }
 
 .counter {
+  animation: new-item-animation .3s linear forwards;
   border: solid black 1px;
   border-radius: 50%;
   height: 70%;
   width: 70%;
+}
+
+@keyframes new-item-animation {
+  from {
+    transform: translateY(-400px);
+  }
+
+  to {
+    transform : translateY(0);
+  }
 }
 
 .counter-0 {
