@@ -35,14 +35,12 @@ def training_loop(training_model, opponent_model, verbose=False):
     # now execute the q learning
     y = 0.9
     eps = 0.5
-    interval_size = 5
-    num_episodes = interval_size * 1
+    num_episodes = 1000
     decay_factor = (1000 * eps) ** (
         -1 / num_episodes
     )  # ensures that eps = 0.001 after `num_episodes` episodes
 
     r_avg_list = []
-    sse_avg_list = []
     wins = []
     n_moves_list = []
     moves_played = [0] * BOARD_WIDTH
@@ -51,7 +49,7 @@ def training_loop(training_model, opponent_model, verbose=False):
     for i in tqdm(range(num_episodes), desc="Training"):
         
         avg_reward = sum(r_avg_list[-100:])/100
-        if avg_reward > 950:  # TODO: implement early stopping if avg reward is already high - 
+        if avg_reward > 950:
             print(f"Stopping early, average reward has reached {round(avg_reward,2)}")
             break
 
@@ -91,11 +89,11 @@ def training_loop(training_model, opponent_model, verbose=False):
             if winner == as_player:
                 done = True
                 wins.append(1)
-                r = 1000 - move_num ** 2
+                r = 1000 - move_num ** 2 # Squared term ensures quicker victories are rewarded more
             elif winner == 1 - as_player:
                 done = True
                 wins.append(0)
-                r = -(1000 - move_num ** 2)
+                r = -(1000 - move_num ** 2) # Squared term ensures quicker victories are rewarded more
             elif winner == -1:
                 done = True
                 wins.append(None)
@@ -138,9 +136,6 @@ def training_loop(training_model, opponent_model, verbose=False):
 
             board = new_board
             r_sum += r
-
-        if verbose and ((i % interval_size == 0 and i > 0) or (i == num_episodes - 1)):
-            run_game(training_model, opponent_model, verbose=True)
 
         # Collect game level metrics
         r_avg_list.append(round(r_sum, 2))
