@@ -197,20 +197,20 @@ def performance_stats(model1, model2, verbose=False, N_RUNS=50):
 basic = BasicModel()
 random_model = RandomModel()
 
-m1 = Model(model_name="mtest1.model")
-m2 = Model(model_name="mtest2.model")
+m1 = Model(model_name="m6by7-1.model")
+m2 = Model(model_name="m6by7-2.model")
 
 log_dir = "logs/overall/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_overall = ModifiedTensorBoard(log_dir=log_dir)
 
 
-for i in range(2):
+for i in range(20):
     print(f"\n\n\nround {i}\n\n\n")
     if i > 0:
         time.sleep(1)
 
-    training_loop(m1, m2, verbose=True, message=f"iter {i} - model 1")
-    training_loop(m2, m1, verbose=True, message=f"iter {i} - model 2")
+    training_loop(m1, m2, verbose=False, message=f"iter {i} - model 1")
+    training_loop(m2, m1, verbose=False, message=f"iter {i} - model 2")
 
     tensorboard_overall.update_stats(
         m1_win_rate_v_basic=performance_stats(m1, basic),

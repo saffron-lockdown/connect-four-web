@@ -1,9 +1,9 @@
 import random
 from copy import deepcopy
 
-BOARD_HEIGHT = 4
-BOARD_WIDTH = 4
-LINE_LENGTH = 3  # the line you need to make
+BOARD_HEIGHT = 6
+BOARD_WIDTH = 7
+LINE_LENGTH = 4  # the line you need to make
 
 
 class Game:
