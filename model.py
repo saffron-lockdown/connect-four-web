@@ -92,7 +92,7 @@ class Model:
         self._model.add(Dense(BOARD_WIDTH, activation="linear"))
         self._model.compile(
             loss="mse",
-            optimizer=keras.optimizers.Adam(learning_rate=0.005),
+            optimizer=keras.optimizers.Adam(learning_rate=0.002),
             metrics=["mae"],
         )
 

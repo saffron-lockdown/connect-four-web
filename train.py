@@ -20,7 +20,7 @@ from tensorflow.keras.models import Sequential
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
 
 
-def training_loop(training_model, opponent_model, verbose=False):
+def training_loop(training_model, opponent_model, verbose=False, message=""):
 
     winner = None
 
@@ -46,7 +46,7 @@ def training_loop(training_model, opponent_model, verbose=False):
     moves_played = [0] * BOARD_WIDTH
 
     
-    for i in tqdm(range(num_episodes), desc="Training"):
+    for i in tqdm(range(num_episodes), desc="Training (" + message + ")"):
         
         avg_reward = sum(r_avg_list[-100:])/100
         if avg_reward > 950:
@@ -209,8 +209,8 @@ for i in range(2):
     if i > 0:
         time.sleep(1)
 
-    training_loop(m1, m2, verbose=True)
-    training_loop(m2, m1, verbose=True)
+    training_loop(m1, m2, verbose=True, message=f"iter {i} - model 1")
+    training_loop(m2, m1, verbose=True, message=f"iter {i} - model 2")
 
     tensorboard_overall.update_stats(
         m1_win_rate_v_basic=performance_stats(m1, basic),
