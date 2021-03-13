@@ -133,7 +133,7 @@ class Game:
         # Header
         print(f"MOVE: {str(self._move_num)}")
         print(f"PLAYER {str(self._player)} PLAYS {str(self._move)}")
-        print("-" * BOARD_SIZE)
+        print("-" * BOARD_WIDTH)
 
         # Board
         copy = deepcopy(self._board)

@@ -129,5 +129,10 @@ class Model:
     def fit_one(self, as_player, board, *args, **kwargs):
         self._model.fit(self.input_encoding(board, as_player), *args, **kwargs)
 
-    def save(self, model_name):
-        self._model.save("models/" + model_name)
+    def save(self, model_name=None):
+        if self._name:
+            self._model.save("models/" + self._name)
+        elif model_name:    
+            self._model.save("models/" + model_name)
+        else:
+            print("please provide model name")
