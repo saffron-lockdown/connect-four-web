@@ -74,8 +74,8 @@ class Model:
 
         if print_probs:
             print([round(x, 2) for x in pred[0]])
-        
-        smax = softmax([x/100 for x in pred[0]])
+
+        smax = softmax([x / 100 for x in pred[0]])
         move = random.choices(range(len(smax)), smax)[0]
         self._moves.append(move)
 

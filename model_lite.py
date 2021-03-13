@@ -5,7 +5,8 @@ from copy import deepcopy
 from scipy.special import softmax
 import random
 
-class ModelLite():
+
+class ModelLite:
     def __init__(self, load_model_name):
         # Load the TFLite model and allocate tensors.
         self.interpreter = tflite.Interpreter(model_path="models/model.tflite")
@@ -14,7 +15,7 @@ class ModelLite():
         # Get input and output tensors.
         self.input_details = self.interpreter.get_input_details()
         self.output_details = self.interpreter.get_output_details()
-    
+
     def input_encoding(self, board, as_player):
 
         if as_player == 1:
@@ -53,7 +54,7 @@ class ModelLite():
         if print_probs:
             print([round(x, 2) for x in pred[0]])
 
-        smax = softmax([x/100 for x in pred[0]])
+        smax = softmax([x / 100 for x in pred[0]])
         move = random.choices(range(len(smax)), smax)[0]
 
         return move
@@ -63,13 +64,13 @@ class ModelLite():
         # Test the model on random input data.
         # input_shape = input_details[0]['shape']
         # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
-        
-        self.interpreter.set_tensor(self.input_details[0]['index'], self.input_encoding(board, as_player))
+
+        self.interpreter.set_tensor(
+            self.input_details[0]["index"], self.input_encoding(board, as_player)
+        )
 
         self.interpreter.invoke()
 
         # The function `get_tensor()` returns a copy of the tensor data.
         # Use `tensor()` in order to get a pointer to the tensor.
-        return self.interpreter.get_tensor(self.output_details[0]['index'])
-
-        
+        return self.interpreter.get_tensor(self.output_details[0]["index"])
