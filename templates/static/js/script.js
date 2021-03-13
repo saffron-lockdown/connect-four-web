@@ -37,11 +37,10 @@ function App(props) {
     winnerText = "";
   }
   return html`
-    <div class="board">
+    <div class="row board">
       ${[
         board.map((col, colIndex) => {
           const ghostRowIndex = col.findIndex((x) => x === null)
-          let pizza;
           return html`
             <div class="col">
               ${col.map((row, rowIndex) => html`
@@ -67,7 +66,6 @@ function App(props) {
         })
       ]}
     </div>
-    <div class="row">${winnerText}</div>
     <div class="row">
       <button class="btn btn-primary btn-block" onClick=${() => {
         $.post("/postmethod/restart", function (err, req, resp) {
@@ -78,6 +76,7 @@ function App(props) {
         Restart Game
       </button>
     </div>
+    <div class="row">${winnerText}</div>
   `
 }
 

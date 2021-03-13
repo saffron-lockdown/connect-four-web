@@ -21,10 +21,21 @@ p {
   font-size: xx-large;
 }
 
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.row {
+  margin-bottom: 15px;
+}
+
 .board {
   display: flex;
   flex-direction: row;
   align-items: center;
+  border: solid black 0.5px;
 }
 
 .col {
@@ -44,7 +55,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: solid black 1px;
+  border: solid black 0.5px;
   height: 50px;
   width: 50px;
 }
