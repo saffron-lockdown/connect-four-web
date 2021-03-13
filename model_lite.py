@@ -8,7 +8,7 @@ import random
 class ModelLite():
     def __init__(self, load_model_name):
         # Load the TFLite model and allocate tensors.
-        self.interpreter = tflite.Interpreter(model_path="model.tflite")
+        self.interpreter = tflite.Interpreter(model_path="models/model.tflite")
         self.interpreter.allocate_tensors()
 
         # Get input and output tensors.
