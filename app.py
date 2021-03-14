@@ -15,7 +15,7 @@ if os.getenv("ENV") == "prod":
 else:
     from model import Model  # For dev
 
-    app.model = Model("models/m1-2.model")  # For dev
+    app.model = Model("models/m6by7-2.model")  # For dev
 
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
