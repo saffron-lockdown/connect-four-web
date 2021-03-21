@@ -6,7 +6,7 @@ from scipy.special import softmax
 
 from game import BOARD_WIDTH, BOARD_HEIGHT, Game, run_game
 from tensorflow import keras
-from tensorflow.keras.layers import Dense, InputLayer
+from tensorflow.keras.layers import Dense, InputLayer, Conv2D, Flatten
 from tensorflow.keras.models import Sequential
 
 
@@ -62,7 +62,7 @@ class Model:
 
     def __init__(self, load_model_name=None, model_name="model"):
         if load_model_name:
-            self._model = keras.models.load_model(load_model_name)
+            self._model = keras.models.load_model("models/" + load_model_name)
             self._name = load_model_name
         else:
             self.initialise()
@@ -85,17 +85,18 @@ class Model:
         return self._model.predict(self.input_encoding(board, as_player))
 
     def initialise(self):
-        self._model = Sequential()
-        self._model.add(InputLayer(batch_input_shape=(1, 2 * BOARD_WIDTH * BOARD_HEIGHT)))
-        self._model.add(Dense(6 * BOARD_WIDTH * BOARD_HEIGHT, activation="relu"))
-        self._model.add(Dense(2 * BOARD_WIDTH, activation="relu"))
+        self._model = Sequential()        
+        self._model.add(Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=(1, 7, 6, 1)))
+        self._model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
+        self._model.add(Flatten())
+        self._model.add(Dense(32, activation="relu"))
         self._model.add(Dense(BOARD_WIDTH, activation="linear"))
         self._model.compile(
             loss="mse",
-            optimizer=keras.optimizers.Adam(learning_rate=0.005),
+            optimizer=keras.optimizers.Adam(learning_rate=0.001),
             metrics=["mae"],
         )
-
+        
     def input_encoding(self, board, as_player):
 
         if as_player == 1:
@@ -103,6 +104,8 @@ class Model:
         else:
             reversed_board = [[1 - cell for cell in col] for col in board]
             input_vector = self.board_to_vec(reversed_board)
+
+        print(input_vector.shape)
         return input_vector
 
     def board_to_vec(self, board, length=BOARD_HEIGHT):
@@ -110,21 +113,15 @@ class Model:
         for b in copy:
             b += [None] * (length - len(b))
 
-        input_vec = []
 
-        for col in copy:
-            for item in col:
-                if item is None:
-                    input_vec += [0, 0]
-                else:
-                    if item == 0:
-                        input_vec += [0, 1]
-                    elif item == 1:
-                        input_vec += [1, 0]
-                    else:
-                        raise Exception
-
-        return np.array([input_vec])
+        input_layer_0 = [[tile_encoding(tile) for tile in col] for col in copy]
+        print(input_layer_0)
+        # input_layer_1 = [[int(tile==1) for tile in col] for col in copy]
+        
+        # print(np.array([[input_layer_0, input_layer_1]]).shape)
+        print(np.array([[input_layer_0]]).transpose(0, 2, 3, 1).shape)
+        print(np.array([[input_layer_0]]))
+        return np.array([[input_layer_0]]).transpose(0, 2, 3, 1)
 
     def fit_one(self, as_player, board, *args, **kwargs):
         self._model.fit(self.input_encoding(board, as_player), *args, **kwargs)
@@ -136,3 +133,11 @@ class Model:
             self._model.save("models/" + model_name)
         else:
             print("please provide model name")
+
+def tile_encoding(x):
+    if x == 0:
+        return 1
+    elif x == 1:
+        return -1
+    else:
+        return 0
