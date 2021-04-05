@@ -6,7 +6,7 @@ from scipy.special import softmax
 
 from game import BOARD_WIDTH, BOARD_HEIGHT, Game, run_game
 from tensorflow import keras
-from tensorflow.keras.layers import Dense, InputLayer, Conv2D, Flatten
+from tensorflow.keras.layers import Dense, InputLayer
 from tensorflow.keras.models import Sequential
 
 
@@ -72,7 +72,6 @@ class Model:
 
         pred = self.predict(board, as_player)
 
-        # TODO WORK HERE
         if valid_moves_only:
             base_smax = [x / 20 for x in pred[0]]
             for i in range(BOARD_WIDTH):

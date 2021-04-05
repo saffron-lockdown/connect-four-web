@@ -50,7 +50,6 @@ class ModelLite:
     def move(self, board, as_player, print_probs=False, valid_moves_only=False):
         pred = self.predict(board, as_player)
 
-        # TODO WORK HERE
         if valid_moves_only:
             base_smax = [x / 20 for x in pred[0]]
             for i in range(BOARD_WIDTH):
