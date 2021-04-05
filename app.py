@@ -11,11 +11,11 @@ app = Flask(__name__)
 if os.getenv("ENV") == "prod":
     from model_lite import ModelLite  # For Prod
 
-    app.model = ModelLite("models/model.tflite")  # For Prod
+    app.model = ModelLite("model-40-iters.tflite")  # For Prod
 else:
     from model import Model  # For dev
 
-    app.model = Model("models/m6by7-1.model")  # For dev
+    app.model = Model("m6by7-dense-cont-v-new-q-v-itself-40-iters.model")  # For dev
 
 app.debug = False
 app._static_folder = os.path.abspath("templates/static/")
@@ -24,7 +24,7 @@ app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
 @app.route("/", methods=["GET"])
 def index():
-    title = "Let's play connect 3 :D"
+    title = "Let's play connect 4 :D"
     resp = make_response(render_template("layouts/index.html", title=title))
     resp.set_cookie("cookie", str(uuid.uuid1()))
     return resp
@@ -72,7 +72,7 @@ def post_move():
 
 
 def get_opponent_move(board):
-    return app.model.move(board, as_player=1)
+    return app.model.move(board, as_player=1, print_probs=True, valid_moves_only=True)
 
 
 def encode(winner, board, new_board):

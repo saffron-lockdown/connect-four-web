@@ -227,6 +227,8 @@ K.set_value(m1._model.optimizer.learning_rate, 0.0001)
 
 m2 = m1
 
+#############################
+# Training loop
 # for i in range(10):
 #     print(f"\n\n\nround {i}\n\n\n")
 #     if i > 0:
@@ -239,8 +241,28 @@ m2 = m1
 #     m2.save()
 
 
-# # run_game(training_model, basic_model, verbose=True)
+#############################
+# I want to play a game
+# for _ in range(3):
+#     play_game(m1)
+#     play_game(m2)
 
-for _ in range(3):
-    play_game(m1)
-    play_game(m2)
+
+#############################
+# Performance comparison
+# m20 = Model(load_model_name="m6by7-dense-cont-v-new-q-v-itself-20-iters.model")
+# m30 = Model(load_model_name="m6by7-dense-cont-v-new-q-v-itself-30-iters.model")
+# m40 = Model(load_model_name="m6by7-dense-cont-v-new-q-v-itself-40-iters.model")
+# basic = BasicModel()
+
+# mods = {'basic': basic,
+# '20': m20,
+# '30': m30,
+# '40': m40}
+# results = {}
+# for m_name, m in mods.items():
+#     for n_name, n in mods.items():
+#         results[f"{m_name}-{n_name}"] = performance_stats(m, n, verbose=False, N_RUNS=50)
+
+# for a, b, in results.items():
+#     print(a, b)
