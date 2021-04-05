@@ -17,12 +17,11 @@ class ModelLite:
         self.output_details = self.interpreter.get_output_details()
 
     def input_encoding(self, board, as_player):
-
         if as_player == 1:
-            input_vector = self.board_to_vec(board).astype(np.float32)
+            input_vector = self.board_to_vec(board)
         else:
             reversed_board = [[1 - cell for cell in col] for col in board]
-            input_vector = self.board_to_vec(reversed_board).astype(np.float32)
+            input_vector = self.board_to_vec(reversed_board)
 
         return input_vector
 
