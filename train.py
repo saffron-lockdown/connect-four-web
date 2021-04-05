@@ -26,7 +26,8 @@ def training_loop(training_model, opponent_model, num_episodes, verbose=False, m
 
     # for tensor board logging
     log_dir = (
-        "logs/fit/"
+        "logs2/fit/"
+        + "0104-6by7"
         + training_model._name
         + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     )
@@ -43,7 +44,7 @@ def training_loop(training_model, opponent_model, num_episodes, verbose=False, m
     wins = []
     n_moves_list = []
     moves_played = [0] * BOARD_WIDTH
-    perf_interval = 10
+    perf_interval = 5
     basic_model = BasicModel()
     random_model = RandomModel()
     
@@ -52,8 +53,8 @@ def training_loop(training_model, opponent_model, num_episodes, verbose=False, m
         target_list = []
         input_list = []
 
-        avg_reward = sum(r_avg_list[-100:])/100
-        if avg_reward > 950:
+        avg_reward = sum(r_avg_list[-50:])/50
+        if avg_reward > 800:
             print(f"Stopping early, average reward has reached {round(avg_reward,2)}")
             break
 
@@ -105,18 +106,23 @@ def training_loop(training_model, opponent_model, num_episodes, verbose=False, m
             else:
                 r = move_num
 
+            target_vec = deepcopy(preds[0])
+
             if winner is None:
-                target = r + y * np.max(training_model.predict(new_board, as_player))
+                target = (1-y)*target_vec[move] + y*(r + np.max(training_model.predict(new_board, as_player)))
             else:
                 target = r
-
-            target_vec = deepcopy(preds[0])
+            
             target_vec[move] = target
 
-
-            as_player_list.append(as_player)
-            target_list.append(target_vec)
-            input_list.append(board)
+            training_model.fit_one(
+                board,
+                as_player,
+                np.array([target_vec]),
+                epochs=1,
+                verbose=0,
+                callbacks=[tensorboard],
+            )
 
             if verbose:
 
@@ -129,22 +135,13 @@ def training_loop(training_model, opponent_model, num_episodes, verbose=False, m
                     {training_model._name} training as player: {as_player}, move: {move_num}, eps: {round(eps, 2)},
                     old preds: {[round(p, 2) for p in preds[0]]}, rand move: {random_move},
                     tgt preds: {[round(p, 2) for p in target_vec]}, reward: {r},
-                    new preds: {[round(p, 2) for p in new_preds[0]]}, average last 20 games: {round(sum(r_avg_list[-20:])/20, 2)} 
+                    new preds: {[round(p, 2) for p in new_preds[0]]}, average last 50 games: {round(avg_reward,2)} 
                     mse: {round(mse, 3)} >> {round(new_mse, 3)} ({round(new_mse - mse, 3)})
                     """
                 )
 
             board = new_board
             r_sum += r
-
-        training_model.fit_one(
-            as_player_list,
-            input_list,
-            np.array(target_list),
-            epochs=1,
-            verbose=0,
-            callbacks=[tensorboard],
-        )
 
         # Collect game level metrics
         r_avg_list.append(round(r_sum, 2))
@@ -154,7 +151,7 @@ def training_loop(training_model, opponent_model, num_episodes, verbose=False, m
             reward_sum=r_sum, wins=wins[-1], n_moves_avg=n_moves_list[-1]
         )
         tensorboard.update_dist(moves_played=moves_played)
-        if move_num % perf_interval == 0:
+        if i % perf_interval == 0:
             
             v_basic_result = run_game(alg0=training_model, alg1=basic_model, verbose=False)
             v_random_result = run_game(alg0=training_model, alg1=random_model, verbose=False)
@@ -223,24 +220,27 @@ def performance_stats(model1, model2, verbose=False, N_RUNS=50):
 
 
 
-m1 = Model(model_name="m6by7-cnn-contenc-1.model")
-m2 = Model(model_name="m6by7-cnn-contenc-2.model")
+m1 = Model(load_model_name="m6by7-dense-cont-v-new-q-v-itself.model")
 
+from tensorflow.keras import backend as K
+K.set_value(m1._model.optimizer.learning_rate, 0.0001)
 
-for i in range(2):
-    print(f"\n\n\nround {i}\n\n\n")
-    if i > 0:
-        time.sleep(1)
+m2 = m1
 
-    training_loop(m1, m2, 10, verbose=True, message=f"iter {i} - model 1")
-    m1.save()
+# for i in range(10):
+#     print(f"\n\n\nround {i}\n\n\n")
+#     if i > 0:
+#         time.sleep(1)
 
-    training_loop(m2, m1, 10, verbose=True, message=f"iter {i} - model 2")
-    m2.save()
+#     training_loop(m1, m2, 1000, verbose=True, message=f"iter {i} - model 1")
+#     m1.save()
+    
+#     training_loop(m2, m1, 1000, verbose=True, message=f"iter {i} - model 2")
+#     m2.save()
 
 
 # # run_game(training_model, basic_model, verbose=True)
 
-# for _ in range(3):
-#     play_game(m1)
-#     play_game(m2)
+for _ in range(3):
+    play_game(m1)
+    play_game(m2)

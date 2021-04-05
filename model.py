@@ -68,28 +68,37 @@ class Model:
             self.initialise()
             self._name = model_name
 
-    def move(self, board, as_player, print_probs=False):
+    def move(self, board, as_player, print_probs=False, valid_moves_only=False):
 
         pred = self.predict(board, as_player)
 
+        # TODO WORK HERE
+        if valid_moves_only:
+            base_smax = [x / 20 for x in pred[0]]
+            for i in range(BOARD_WIDTH):
+                if len(board[i]) >= BOARD_HEIGHT:
+                    base_smax[i] = -9999
+            smax = softmax(base_smax)
+        else:
+            smax = softmax([x / 20 for x in pred[0]])
+        
         if print_probs:
             print([round(x, 2) for x in pred[0]])
+            print([round(x, 2) for x in smax])
 
-        smax = softmax([x / 100 for x in pred[0]])
         move = random.choices(range(len(smax)), smax)[0]
-        self._moves.append(move)
 
+        self._moves.append(move)
         return move
 
     def predict(self, board, as_player):
         return self._model.predict(self.input_encoding(board, as_player))
 
     def initialise(self):
-        self._model = Sequential()        
-        self._model.add(Conv2D(16, kernel_size=(3, 3), activation='relu', input_shape=(1, 7, 6, 1)))
-        self._model.add(Conv2D(32, kernel_size=(3, 3), activation='relu'))
-        self._model.add(Flatten())
-        self._model.add(Dense(32, activation="relu"))
+        self._model = Sequential()
+        self._model.add(InputLayer(input_shape=(1, BOARD_WIDTH * BOARD_HEIGHT)))
+        self._model.add(Dense(6 * BOARD_WIDTH * BOARD_HEIGHT, activation="relu"))
+        self._model.add(Dense(2 * BOARD_WIDTH, activation="relu"))
         self._model.add(Dense(BOARD_WIDTH, activation="linear"))
         self._model.compile(
             loss="mse",
@@ -98,14 +107,12 @@ class Model:
         )
         
     def input_encoding(self, board, as_player):
-
         if as_player == 1:
             input_vector = self.board_to_vec(board)
         else:
             reversed_board = [[1 - cell for cell in col] for col in board]
             input_vector = self.board_to_vec(reversed_board)
 
-        print(input_vector.shape)
         return input_vector
 
     def board_to_vec(self, board, length=BOARD_HEIGHT):
@@ -113,18 +120,12 @@ class Model:
         for b in copy:
             b += [None] * (length - len(b))
 
+        input_layer_0 = [tile_encoding(tile) for col in copy for tile in col]
 
-        input_layer_0 = [[tile_encoding(tile) for tile in col] for col in copy]
-        print(input_layer_0)
-        # input_layer_1 = [[int(tile==1) for tile in col] for col in copy]
-        
-        # print(np.array([[input_layer_0, input_layer_1]]).shape)
-        print(np.array([[input_layer_0]]).transpose(0, 2, 3, 1).shape)
-        print(np.array([[input_layer_0]]))
-        return np.array([[input_layer_0]]).transpose(0, 2, 3, 1)
+        return np.array([input_layer_0])
 
-    def fit_one(self, as_player, board, *args, **kwargs):
-        self._model.fit(self.input_encoding(board, as_player), *args, **kwargs)
+    def fit_one(self, board, as_player, y, *args, **kwargs):
+        self._model.fit(self.input_encoding(board, as_player), y, *args, **kwargs)
 
     def save(self, model_name=None):
         if self._name:

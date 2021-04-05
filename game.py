@@ -191,7 +191,7 @@ def play_game(opponent):
     board = g._board
 
     while True:
-        move = opponent.move(board, 0)
+        move = opponent.move(board, 0, valid_moves_only=True, print_probs=True)
         winner, board = g.move(move)
 
         if winner is not None:
