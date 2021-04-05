@@ -39,13 +39,13 @@ class ModelLite:
         pred = self.predict(board, as_player)
         print(pred)
         if valid_moves_only:
-            base_smax = [x / 20 for x in pred[0]]
+            base_smax = [x / 20 for x in pred[0][0]]
             for i in range(BOARD_WIDTH):
                 if len(board[i]) >= BOARD_HEIGHT:
                     base_smax[i] = -9999
             smax = softmax(base_smax)
         else:
-            smax = softmax([x / 20 for x in pred[0]])
+            smax = softmax([x / 20 for x in pred[0][0]])
         
         print(smax)
         move = random.choices(range(len(smax)), smax)[0]
