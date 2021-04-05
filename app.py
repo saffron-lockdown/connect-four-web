@@ -72,7 +72,7 @@ def post_move():
 
 
 def get_opponent_move(board):
-    return app.model.move(board, as_player=1, print_probs=True, valid_moves_only=True)
+    return app.model.move(board, as_player=1, valid_moves_only=True)
 
 
 def encode(winner, board, new_board):

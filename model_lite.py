@@ -35,7 +35,7 @@ class ModelLite:
 
         return np.array([input_layer_0])
 
-    def move(self, board, as_player, print_probs=False, valid_moves_only=False):
+    def move(self, board, as_player, valid_moves_only=False):
         pred = self.predict(board, as_player)
 
         if valid_moves_only:
@@ -47,10 +47,6 @@ class ModelLite:
         else:
             smax = softmax([x / 20 for x in pred[0]])
         
-        if print_probs:
-            print([round(x, 2) for x in pred[0]])
-            print([round(x, 2) for x in smax])
-
         move = random.choices(range(len(smax)), smax)[0]
         return move
      
