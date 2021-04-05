@@ -18,7 +18,7 @@ img.results-img {
 }
 p {
   font-family: monospace;
-  font-size: xx-large;
+  font-size: large;
 }
 
 #app {
@@ -65,7 +65,7 @@ p {
   border-radius: 50%;
   height: 70%;
   width: 70%;
-  animation: counter-falling .3s ease-in forwards;
+  animation: counter-falling 0.3s ease-in forwards;
 }
 
 @keyframes counter-falling {

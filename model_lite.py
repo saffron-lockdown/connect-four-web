@@ -9,7 +9,7 @@ import random
 class ModelLite:
     def __init__(self, load_model_name):
         # Load the TFLite model and allocate tensors.
-        self.interpreter = tflite.Interpreter(model_path="models/model.tflite")
+        self.interpreter = tflite.Interpreter(model_path="models/" + load_model_name)
         self.interpreter.allocate_tensors()
 
         # Get input and output tensors.
@@ -47,18 +47,25 @@ class ModelLite:
 
         return np.array([input_vec])
 
-    def move(self, board, as_player, print_probs=False):
-
+    def move(self, board, as_player, print_probs=False, valid_moves_only=False):
         pred = self.predict(board, as_player)
 
+        if valid_moves_only:
+            base_smax = [x / 20 for x in pred[0]]
+            for i in range(BOARD_WIDTH):
+                if len(board[i]) >= BOARD_HEIGHT:
+                    base_smax[i] = -9999
+            smax = softmax(base_smax)
+        else:
+            smax = softmax([x / 20 for x in pred[0]])
+        
         if print_probs:
             print([round(x, 2) for x in pred[0]])
+            print([round(x, 2) for x in smax])
 
-        smax = softmax([x / 100 for x in pred[0]])
         move = random.choices(range(len(smax)), smax)[0]
-
         return move
-
+     
     def predict(self, board, as_player):
 
         # Test the model on random input data.

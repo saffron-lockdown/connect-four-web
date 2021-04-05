@@ -1,9 +1,9 @@
 import random
 from copy import deepcopy
 
-BOARD_HEIGHT = 4
-BOARD_WIDTH = 4
-LINE_LENGTH = 3  # the line you need to make
+BOARD_HEIGHT = 6
+BOARD_WIDTH = 7
+LINE_LENGTH = 4  # the line you need to make
 
 
 class Game:
@@ -24,7 +24,11 @@ class Game:
             for i in range(0, self._width - LINE_LENGTH + 1)
             for j in range(0, self._height)
         ]
-        self.vertical_seeds = [[j, i] for [i, j] in self.horizontal_seeds]
+        self.vertical_seeds = [
+            [i, j]
+            for i in range(0, self._width)
+            for j in range(0, self._height - LINE_LENGTH + 1)
+        ]
         self.up_diag_seeds = [
             [i, j]
             for i in range(0, self._width - LINE_LENGTH + 1)
@@ -92,9 +96,10 @@ class Game:
         [[col1, row1], [col2, row2]]
         Returns True if all counters at those positions belong to the same player
         """
+
         try:
-            result = [self._board[j][i] for [i, j] in line]
-        except:
+            result = [self._board[i][j] for [i, j] in line]
+        except Exception as e:
             return False
         return len(result) == LINE_LENGTH and len(set(result)) == 1
 
@@ -186,7 +191,7 @@ def play_game(opponent):
     board = g._board
 
     while True:
-        move = opponent.move(board, 0)
+        move = opponent.move(board, 0, valid_moves_only=True, print_probs=True)
         winner, board = g.move(move)
 
         if winner is not None:
@@ -210,16 +215,17 @@ def play_game(opponent):
 # Player Strategies
 ####################
 
-
 def alg0(board):
     # always goes for col 2
     return 2
 
+class alg1:
+    def move(self, board, as_player=0):
+        # plays randomly
+        return random.randint(0, BOARD_WIDTH-1)
 
-def alg1(board):
-    # plays randomly
-    return random.randint(0, 7)
 
+# play_game(alg1())
 
 """
 winner = run_game(alg0, alg1, verbose=True)
