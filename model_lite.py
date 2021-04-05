@@ -24,7 +24,7 @@ class ModelLite:
             reversed_board = [[1 - cell for cell in col] for col in board]
             input_vector = self.board_to_vec(reversed_board).astype(np.float32)
 
-        return input_vector
+        return np.array([input_vector])
 
     def board_to_vec(self, board, length=BOARD_HEIGHT):
         copy = deepcopy(board)
@@ -62,6 +62,7 @@ class ModelLite:
         print(self.input_details)
         print(self.input_details[0]["index"])
         print(self.input_encoding(board, as_player))
+        print(self.input_encoding(board, as_player).shape)
 
         self.interpreter.set_tensor(
             self.input_details[0]["index"], self.input_encoding(board, as_player)
