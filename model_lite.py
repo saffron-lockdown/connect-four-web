@@ -31,21 +31,9 @@ class ModelLite:
         for b in copy:
             b += [None] * (length - len(b))
 
-        input_vec = []
+        input_layer_0 = [tile_encoding(tile) for col in copy for tile in col]
 
-        for col in copy:
-            for item in col:
-                if item is None:
-                    input_vec += [0, 0]
-                else:
-                    if item == 0:
-                        input_vec += [0, 1]
-                    elif item == 1:
-                        input_vec += [1, 0]
-                    else:
-                        raise Exception
-
-        return np.array([input_vec])
+        return np.array([input_layer_0])
 
     def move(self, board, as_player, print_probs=False, valid_moves_only=False):
         pred = self.predict(board, as_player)
@@ -81,3 +69,11 @@ class ModelLite:
         # The function `get_tensor()` returns a copy of the tensor data.
         # Use `tensor()` in order to get a pointer to the tensor.
         return self.interpreter.get_tensor(self.output_details[0]["index"])
+
+def tile_encoding(x):
+    if x == 0:
+        return 1
+    elif x == 1:
+        return -1
+    else:
+        return 0
