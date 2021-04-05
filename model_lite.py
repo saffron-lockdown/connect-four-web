@@ -17,11 +17,12 @@ class ModelLite:
         self.output_details = self.interpreter.get_output_details()
 
     def input_encoding(self, board, as_player):
+
         if as_player == 1:
-            input_vector = self.board_to_vec(board)
+            input_vector = self.board_to_vec(board).astype(np.float32)
         else:
             reversed_board = [[1 - cell for cell in col] for col in board]
-            input_vector = self.board_to_vec(reversed_board)
+            input_vector = self.board_to_vec(reversed_board).astype(np.float32)
 
         return input_vector
 
@@ -58,6 +59,9 @@ class ModelLite:
         # Test the model on random input data.
         # input_shape = input_details[0]['shape']
         # input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
+        print(self.input_details)
+        print(self.input_details[0]["index"])
+        print(self.input_encoding(board, as_player))
 
         self.interpreter.set_tensor(
             self.input_details[0]["index"], self.input_encoding(board, as_player)
