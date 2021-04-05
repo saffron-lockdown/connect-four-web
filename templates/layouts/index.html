@@ -3,5 +3,15 @@ block head %} {{ super() }} {% endblock %} {% block content %}
 <div class="text-center">
   <h1>{{ title }}</h1>
   <div id="app" class="container"></div>
+  <p>
+    Your opponent, Connie, is a neural network with two internal dense layers
+    and 300 internal neurons.
+  </p>
+  <p>
+    She's played approximately 40,000 games more than you have, but on the other
+    hand she knows nothing about the rules. She's learnt to play just by
+    observing which actions lead to wins and which lead to losses.
+  </p>
 </div>
+
 {% endblock %}
