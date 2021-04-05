@@ -98,7 +98,7 @@ function App(props) {
         Restart Game
       </button>
     </div>
-    <div class="row">${winnerText}</div>
+    <div class="row"><p>${winnerText}</p></div>
   `;
 }
 

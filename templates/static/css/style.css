@@ -21,6 +21,9 @@ p {
   font-size: large;
 }
 
+h1 {
+  font-family: monospace;
+}
 #app {
   display: flex;
   flex-direction: column;
